@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.wallpapernest">
    <application
-        android:label="wallpapernest"
+        android:label="WallpaperNest"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
