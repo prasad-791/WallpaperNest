@@ -1,12 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:wallpapernest/configurations/config.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/models/wallpaper_arguments.dart';
 import 'package:wallpapernest/screens/widgets/back_btn_appbar.dart';
-
-import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
+import 'package:wallpapernest/services/unsplash_wallpaper.dart';
 
 class WallpaperScreen extends StatefulWidget {
   const WallpaperScreen({Key? key}) : super(key: key);
@@ -21,6 +18,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
 
   bool fullVisible = false;
   String filePath = '';
+  bool inProcess = false;
 
   Widget moreBtn(var h,var w){
     return GestureDetector(
@@ -53,10 +51,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     );
   }
 
-  void setAsWallPaper(){
-
-  }
-
   Widget infoContainer(Wallpaper wallpaper,var h,var w){
     return Container(
       margin: EdgeInsets.symmetric(horizontal: w*0.05,vertical: h*0.02),
@@ -74,10 +68,26 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(onTap: ()async{
-
+                  if(!inProcess){
+                    setState(() {
+                      inProcess = true;
+                    });
+                    await download(wallpaper.downloadURL);
+                    setState(() {
+                      inProcess = false;
+                    });
+                  }
                 },child: downloadApplyBtn(h, w, Colors.white, primaryBlue, 'Download',w*0.1)),
-                GestureDetector(onTap: (){
-
+                GestureDetector(onTap: ()async{
+                  if(!inProcess){
+                    setState(() {
+                      inProcess = true;
+                    });
+                    await setAsWallPaper(wallpaper.downloadURL);
+                    setState(() {
+                      inProcess = false;
+                    });
+                  }
                 },child: downloadApplyBtn(h, w, primaryBlue,Colors.white, 'Apply',w*0.15)),
               ],
             )
@@ -85,6 +95,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
       ),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,57 +107,62 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as WallpaperArguments;
     final Wallpaper wallpaper =args.wallpaper;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return WillPopScope(
+      onWillPop: ()async{
+        if(!inProcess){
+          return true;
+        }
+        return false;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        height: fullVisible==true?h*0.7:h,
+                        width: w,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15),bottomLeft: Radius.circular(15)),
+                          child: Hero(
+                            tag: wallpaper.imageURL,
+                            child: Image.network(wallpaper.regularImageURL,fit: BoxFit.fill,)
+                        ),),
+                      ),
+                      Visibility(visible: fullVisible,child: infoContainer(wallpaper, h, w)),
+                    ],
+                  ),
+                ),
+                Column(
                   children: [
-                    // Container(
-                    //   // height: h,
-                    //   decoration: const BoxDecoration(
-                    //     color: Colors.transparent,
-                    //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
-                    //   ),
-                    //   child: Hero(
-                    //     tag: wallpaper.imageURL,
-                    //     child: Image.network(wallpaper.regularImageURL,fit: BoxFit.fill,)
-                    //   ),
-                    // ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      height: fullVisible==true?h*0.7:h,
-                      width: w,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15),bottomLeft: Radius.circular(15)),
-                        child: Hero(
-                          tag: wallpaper.imageURL,
-                          child: Image.network(wallpaper.regularImageURL,fit: BoxFit.fill,)
-                      ),),
+                    Container(
+                      margin: EdgeInsets.only(left: w*0.03,),
+                      child: BackBtnAppBar(goBack: (){
+                        if(!inProcess){
+                          Navigator.pop(context);
+                        }
+                      }),
                     ),
-                    Visibility(visible: fullVisible,child: infoContainer(wallpaper, h, w)),
+                    const Spacer(),
+                    Visibility(visible: !fullVisible,child: moreBtn(h,w)),
+                    SizedBox(height: h*0.1,),
                   ],
                 ),
-              ),
-              Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: w*0.03,),
-                    child: BackBtnAppBar(goBack: (){
-                      Navigator.pop(context);
-                    }),
+                Visibility(
+                  visible: inProcess,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white,),
                   ),
-                  const Spacer(),
-                  Visibility(visible: !fullVisible,child: moreBtn(h,w)),
-                  SizedBox(height: h*0.1,),
-                ],
-              )
-            ],
-          ),
+                ),
+              ],
+            ),
+        ),
       ),
     );
   }
