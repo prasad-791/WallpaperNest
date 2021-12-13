@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:wallpapernest/configurations/config.dart';
@@ -16,7 +15,6 @@ const String _url = "https://api.unsplash.com/search/photos?client_id="+accessKe
 // Get Wallpapers by Category
 Future<List<Wallpaper>> getWallpaper(String category,int pages) async {
 
-  print(pages);
   final response = await http.get(
     Uri.parse(_url+"&query="+category+"&page=${pages+1}&per_page=50"),
     headers: <String,String>{
@@ -36,6 +34,7 @@ Future<List<Wallpaper>> getWallpaper(String category,int pages) async {
       return wallpaperList;
 
   }else{
+    print(response.body);
     throw Exception("Could not get wallpaper list, try again later!");
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallpapernest/configurations/config.dart';
+import 'package:wallpapernest/screens/main_screen/main_screen.dart';
 import 'package:wallpapernest/screens/widgets/auth_btn.dart';
 import 'package:wallpapernest/screens/widgets/password_text_field.dart';
 import 'package:wallpapernest/screens/widgets/text_field.dart';
@@ -132,7 +133,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
             ),
             SizedBox(height: h*0.03,),
             AuthButton(value: 'Sign Up',function: (){
-                Navigator.pushNamed(context, '/main_screen');
+                Navigator.pushNamed(context, MainScreen.routeName);
               },
             ),
             SizedBox(height: h*0.03,),
@@ -180,7 +181,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
             ),
             SizedBox(height: h*0.03,),
             AuthButton(value: 'Sign In',function: (){
-              Navigator.pushNamed(context, '/main_screen');
+              Navigator.pushNamed(context, MainScreen.routeName);
               },
             ),
             SizedBox(height: h*0.03,),

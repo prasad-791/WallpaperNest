@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallpapernest/screens/liked_wallpaper_screen/liked_wallpaper_screen.dart';
 import 'package:wallpapernest/screens/main_screen/main_screen.dart';
 import 'package:wallpapernest/screens/splash_screen.dart';
 import 'package:wallpapernest/screens/wallpaper_screen/wallpaper_screen.dart';
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/main_screen': (context)=> const MainScreen(),
-        WallpaperScreen.routeName: (context)=> const WallpaperScreen()
+        MainScreen.routeName: (context)=> const MainScreen(),
+        WallpaperScreen.routeName: (context)=> const WallpaperScreen(),
+        LikedWallpaperScreen.routeName: (context)=> const LikedWallpaperScreen(),
       },
     );
   }

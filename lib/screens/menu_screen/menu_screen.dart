@@ -117,7 +117,7 @@ class _MenuScreenState extends State<MenuScreen> {
       );
     }else if(noResults){
       return Center(
-        child: Text("No Results Found :(",style: TextStyle(fontFamily: fontBold,fontSize: 18,color: primaryGrey),softWrap: true,),
+        child: Text("No Results Found :(\n Click on category again",textAlign: TextAlign.center,style: TextStyle(fontFamily: fontBold,fontSize: 18,color: primaryGrey),softWrap: true,),
       );
     }else{
       return Expanded(child: Padding(
@@ -178,15 +178,7 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ),
             SizedBox(height: height*0.03,),
-            // buildImageCard(tempImages[1]),
-            wallpaperList.isEmpty? Center(
-              child: CircularProgressIndicator(
-                  color: primaryBlue,
-              ),
-            ): Expanded(child: Padding(
-              padding: const EdgeInsets.only(left: 10,right: 10),
-              child: GridViewImages(imageList: wallpaperList,),
-            )),
+            getBody(),
           ],
         ),
     );

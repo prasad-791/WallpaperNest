@@ -20,7 +20,8 @@ Color primaryBlue = const Color.fromRGBO(59, 64, 113,1);
 Color primaryGrey = const Color.fromARGB(255, 169,169,169);
 Color primaryGreyLight = const Color.fromARGB(255,184,184,184);
 
-const String accessKey = "MzH4t77cCuAkIBhLA0311-C1tNyhIrg-8exrdktRY5M";
+// const String accessKey = "MzH4t77cCuAkIBhLA0311-C1tNyhIrg-8exrdktRY5M";
+const String accessKey = "b5R0G8d8xEwcd5GVGVgmwF9x3eZcCrxO9Qt_R3Si7uI";
 
 List<String> wallpaperCategories = [
   "Nature",
@@ -35,19 +36,3 @@ List<String> wallpaperCategories = [
   "Waterfall"
 ];
 
-
-// TEMP
-List<String> tempImages = [
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-  'assets/images/temp1.png',
-  'assets/images/temp2.png',
-];

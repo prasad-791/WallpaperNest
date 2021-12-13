@@ -5,6 +5,9 @@ import 'package:wallpapernest/screens/menu_screen/menu_screen.dart';
 import 'package:wallpapernest/screens/profile_screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
+
+  static const routeName = '/main_screen';
+
   const MainScreen({Key? key}) : super(key: key);
 
   @override

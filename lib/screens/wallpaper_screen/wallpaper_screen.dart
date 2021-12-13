@@ -54,14 +54,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     );
   }
 
-  // Future<void> likeToggle(){
-  //   try{
-  //
-  //   }catch(e){
-  //     showToast(e.toString());
-  //   }
-  // }
-
   Widget infoContainer(Wallpaper wallpaper,var h,var w){
     return Stack(
       clipBehavior: Clip.none,
