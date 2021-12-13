@@ -3,6 +3,7 @@ import 'package:wallpapernest/configurations/config.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/models/wallpaper_arguments.dart';
 import 'package:wallpapernest/screens/widgets/back_btn_appbar.dart';
+import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
 import 'package:wallpapernest/services/unsplash_wallpaper.dart';
 
 class WallpaperScreen extends StatefulWidget {
@@ -16,9 +17,11 @@ class WallpaperScreen extends StatefulWidget {
 
 class _WallpaperScreenState extends State<WallpaperScreen> {
 
+  late Wallpaper wallpaper;
   bool fullVisible = false;
   String filePath = '';
   bool inProcess = false;
+  bool isLiked = false;
 
   Widget moreBtn(var h,var w){
     return GestureDetector(
@@ -51,51 +54,95 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     );
   }
 
+  // Future<void> likeToggle(){
+  //   try{
+  //
+  //   }catch(e){
+  //     showToast(e.toString());
+  //   }
+  // }
+
   Widget infoContainer(Wallpaper wallpaper,var h,var w){
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: w*0.05,vertical: h*0.02),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-            Text(wallpaper.title[0].toUpperCase()+wallpaper.title.substring(1),style: TextStyle(fontFamily: fontExtraBold,fontSize: 24,color: primaryBlue),),
-            SizedBox(height: h*0.02,),
-            Text(wallpaper.description[0].toUpperCase()+wallpaper.description.substring(1),style: TextStyle(fontFamily: fontSemiBold,fontSize: 18,color: Colors.grey[500]),softWrap: true,),
-            SizedBox(height: h*0.02,),
-            Text(wallpaper.userName,style: TextStyle(fontFamily: fontSemiBold,fontSize: 16,color: primaryBlue)),
-            Text(wallpaper.date,style: TextStyle(fontFamily: fontSemiBold,fontSize: 14,color: primaryGrey,fontStyle: FontStyle.italic)),
-            SizedBox(height: h*0.02,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(onTap: ()async{
-                  if(!inProcess){
-                    setState(() {
-                      inProcess = true;
-                    });
-                    await download(wallpaper.downloadURL);
-                    setState(() {
-                      inProcess = false;
-                    });
-                  }
-                },child: downloadApplyBtn(h, w, Colors.white, primaryBlue, 'Download',w*0.1)),
-                GestureDetector(onTap: ()async{
-                  if(!inProcess){
-                    setState(() {
-                      inProcess = true;
-                    });
-                    await setAsWallPaper(wallpaper.downloadURL);
-                    setState(() {
-                      inProcess = false;
-                    });
-                  }
-                },child: downloadApplyBtn(h, w, primaryBlue,Colors.white, 'Apply',w*0.15)),
-              ],
-            )
-        ],
-      ),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+        margin: EdgeInsets.symmetric(horizontal: w*0.05,vertical: h*0.02),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+              Text(wallpaper.title[0].toUpperCase()+wallpaper.title.substring(1),style: TextStyle(fontFamily: fontExtraBold,fontSize: 24,color: primaryBlue),),
+              SizedBox(height: h*0.02,),
+              Text(wallpaper.description[0].toUpperCase()+wallpaper.description.substring(1),style: TextStyle(fontFamily: fontSemiBold,fontSize: 18,color: Colors.grey[500]),softWrap: true,),
+              SizedBox(height: h*0.02,),
+              Text(wallpaper.userName,style: TextStyle(fontFamily: fontSemiBold,fontSize: 16,color: primaryBlue)),
+              Text(wallpaper.date,style: TextStyle(fontFamily: fontSemiBold,fontSize: 14,color: primaryGrey,fontStyle: FontStyle.italic)),
+              SizedBox(height: h*0.02,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(onTap: ()async{
+                    if(!inProcess){
+                      setState(() {
+                        inProcess = true;
+                      });
+                      await download(wallpaper.downloadURL);
+                      setState(() {
+                        inProcess = false;
+                      });
+                    }
+                  },child: downloadApplyBtn(h, w, Colors.white, primaryBlue, 'Download',w*0.1)),
+                  GestureDetector(onTap: ()async{
+                    if(!inProcess){
+                      setState(() {
+                        inProcess = true;
+                      });
+                      await setAsWallPaper(wallpaper.downloadURL);
+                      setState(() {
+                        inProcess = false;
+                      });
+                    }
+                  },child: downloadApplyBtn(h, w, primaryBlue,Colors.white, 'Apply',w*0.15)),
+                ],
+              )
+            ],
+          ),
+        ),
+        Positioned(
+          top: -h*0.035,
+          right: w*0.1,
+          child: Column(
+            children: [
+              FloatingActionButton(
+                backgroundColor: Colors.white,
+                onPressed: (){
+                  setState(() {
+                    inProcess = true;
+                  });
+                  setState(() {
+                    isLiked = !isLiked;
+                    inProcess = false;
+                  });
+                },
+                child: Icon(
+                  Icons.favorite,
+                  color: isLiked==true? Colors.red : primaryGrey,
+                ),
+              ),
+              SizedBox(height: h*0.01,),
+              Text('${wallpaper.likes} likes',style: TextStyle(fontSize: 12,fontFamily: fontSemiBold,color: primaryGrey),),
+            ],
+          ),
+        ),
+      ]
     );
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
 
   @override
@@ -105,7 +152,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     var w = MediaQuery.of(context).size.width;
 
     final args = ModalRoute.of(context)!.settings.arguments as WallpaperArguments;
-    final Wallpaper wallpaper =args.wallpaper;
+     wallpaper =args.wallpaper;
 
     return WillPopScope(
       onWillPop: ()async{
@@ -125,7 +172,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 200),
                         height: fullVisible==true?h*0.7:h,
                         width: w,
                         child: ClipRRect(
@@ -160,6 +207,27 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     child: CircularProgressIndicator(color: Colors.white,),
                   ),
                 ),
+                // Visibility(
+                //   visible: fullVisible,
+                //   child: Positioned(
+                //     child: FloatingActionButton(
+                //       backgroundColor: Colors.white,
+                //       onPressed: (){
+                //         setState(() {
+                //           inProcess = true;
+                //         });
+                //         setState(() {
+                //           isLiked = !isLiked;
+                //           inProcess = false;
+                //         });
+                //       },
+                //       child: Icon(
+                //         Icons.favorite,
+                //         color: isLiked==true? Colors.red : primaryGrey,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
         ),

@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wallpapernest/configurations/config.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/screens/widgets/grid_view_images.dart';
 import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
+import 'package:wallpapernest/screens/widgets/search_widget.dart';
 import 'package:wallpapernest/services/unsplash_wallpaper.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -15,6 +18,9 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   var selectedCategoryIndex = 0;
   List<Wallpaper> wallpaperList = [];
+  var searchText = '';
+  bool isSearching = false;
+  bool noResults = false;
 
   Widget buildWelcomeHeader(var h,var w){
     return Container(
@@ -29,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
               overflow: TextOverflow.ellipsis
           ),),
           SizedBox(height: h*0.005,),
-          Text("Aniket791 " + "👋",style: TextStyle(
+          Text("Aniket791 👋",style: TextStyle(
             fontFamily: fontBold,
             fontSize: 20,
             overflow: TextOverflow.ellipsis,
@@ -67,21 +73,57 @@ class _MenuScreenState extends State<MenuScreen> {
                 wallpaperList.clear();
                 selectedCategoryIndex = wallpaperCategories.indexOf(e);
               });
-              setWallpaperList(e.toLowerCase());
+              setWallpaperList(e.toLowerCase(),-1);
             },
             child: category(e,wallpaperCategories.indexOf(e))
         )
     ).toList();
   }
 
-  void setWallpaperList(String category)async{
+  void setWallpaperList(String category,int type)async{
     try {
-      List<Wallpaper> tempList = await getWallpaper(category);
+      Random random = Random();
+      int page;
+      List<Wallpaper> tempList = [];
+      if(category.compareTo('3d')==0 || category.compareTo('game')==0 && type==-1){
+        page = random.nextInt(95);
+      }else if(type==-1){
+        page = random.nextInt(900);
+      }else{
+        page = 1;
+      }
+
+      tempList = await getWallpaper(category, page);
+
       setState(() {
         wallpaperList = tempList;
+        if(wallpaperList.isEmpty){
+          noResults = true;
+        }else{
+          noResults = false;
+        }
       });
     }catch(e){
       showToast(e.toString());
+    }
+  }
+
+  Widget getBody(){
+    if(wallpaperList.isEmpty && !noResults){
+      return Center(
+        child: CircularProgressIndicator(
+          color: primaryBlue,
+        ),
+      );
+    }else if(noResults){
+      return Center(
+        child: Text("No Results Found :(",style: TextStyle(fontFamily: fontBold,fontSize: 18,color: primaryGrey),softWrap: true,),
+      );
+    }else{
+      return Expanded(child: Padding(
+        padding: const EdgeInsets.only(left: 10,right: 10),
+        child: GridViewImages(imageList: wallpaperList,),
+      ));
     }
   }
 
@@ -89,7 +131,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    setWallpaperList('nature');
+    setWallpaperList('nature',-1);
     super.initState();
   }
 
@@ -104,11 +146,34 @@ class _MenuScreenState extends State<MenuScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(child: buildWelcomeHeader(height, width)),
-            SizedBox(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: buildCategories(),
+            SizedBox(child: SearchBar(
+              makeCategoryInvisible: (visible){
+                setState(() {
+                  isSearching = visible;
+                });
+                setWallpaperList('nature',-1);
+              },
+              onSaved: (text){
+                setState(() {
+                  searchText = text.toString();
+                });
+              },
+              search: ()async{
+                setState(() {
+                  wallpaperList.clear();
+                });
+                setWallpaperList(searchText,1);
+                showToast(wallpaperList.length.toString());
+              },
+            ),),
+            Visibility(
+              visible: !isSearching,
+              child: SizedBox(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: buildCategories(),
+                  ),
                 ),
               ),
             ),

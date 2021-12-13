@@ -14,11 +14,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 const String _url = "https://api.unsplash.com/search/photos?client_id="+accessKey;
 
 // Get Wallpapers by Category
-Future<List<Wallpaper>> getWallpaper(String category) async {
-  Random random = Random();
-  int page = random.nextInt(900);
+Future<List<Wallpaper>> getWallpaper(String category,int pages) async {
+
+  print(pages);
   final response = await http.get(
-    Uri.parse(_url+"&query="+category+"&page=${page+1}&per_page=50"),
+    Uri.parse(_url+"&query="+category+"&page=${pages+1}&per_page=50"),
     headers: <String,String>{
       'Content-Type': 'application/json',
     },
