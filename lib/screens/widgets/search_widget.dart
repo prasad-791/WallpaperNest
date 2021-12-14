@@ -15,6 +15,16 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
 
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    _controller = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -24,6 +34,7 @@ class _SearchBarState extends State<SearchBar> {
     return Container(
       margin: EdgeInsets.only(left: width*0.035,right: width*0.035,top: height*0.025),
       child: CupertinoSearchTextField(
+        controller: _controller,
         padding: EdgeInsets.symmetric(horizontal: width*0.03,vertical: height*0.02),
         decoration: BoxDecoration(
           border: customBorder,
@@ -49,6 +60,8 @@ class _SearchBarState extends State<SearchBar> {
         suffixInsets: const EdgeInsets.only(right: 10),
         prefixInsets: const EdgeInsets.only(left: 10),
         onSuffixTap: (){
+          _controller.clear();
+          FocusScope.of(context).unfocus();
           widget.makeCategoryInvisible(false);
         },
         onTap: (){

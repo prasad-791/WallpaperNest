@@ -7,8 +7,9 @@ import 'package:wallpapernest/screens/profile_screen/profile_screen.dart';
 class MainScreen extends StatefulWidget {
 
   static const routeName = '/main_screen';
+  final String? uid;
 
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({Key? key,required this.uid}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -21,13 +22,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget getScreens(int index){
     switch(index){
       case 0:
-          return const MenuScreen();
+          return MenuScreen(uid: widget.uid,);
       case 1:
-          return const DownloadScreen();
+          return DownloadScreen(uid: widget.uid,);
       case 2:
-          return const ProfileScreen();
+          return ProfileScreen(uid: widget.uid,);
       default:
-          return const MenuScreen();
+          return MenuScreen(uid: widget.uid,);
     }
   }
 

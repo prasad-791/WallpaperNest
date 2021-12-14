@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:wallpapernest/configurations/config.dart';
-import 'package:wallpapernest/screens/main_screen/main_screen.dart';
 import 'package:wallpapernest/screens/widgets/auth_btn.dart';
 import 'package:wallpapernest/screens/widgets/password_text_field.dart';
+import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
 import 'package:wallpapernest/screens/widgets/text_field.dart';
+import 'package:wallpapernest/services/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticateScreen extends StatefulWidget {
   const AuthenticateScreen({Key? key}) : super(key: key);
@@ -18,6 +20,18 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   double dxRegister = 500;
   double dxLogin = 500;
   bool checkedValue = false;
+
+  bool _inProcess = false;
+
+  late String _loginEmail="";
+  late String _loginPassword="";
+
+  late String _signUpEmail="";
+  late String _signUpPassword="";
+  late String _signUpRetypePassword="";
+  late String _signUpUsername="";
+
+  late String rememberedEmail = "";
 
   Widget exploreTextField(){
     return Column(
@@ -86,6 +100,8 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
       );
   }
 
+
+
   Widget buildRegisterContainer(var h,var w){
     return Align(
       alignment: Alignment.bottomLeft,
@@ -98,20 +114,20 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
             SizedBox(height: h*0.01,),
             exploreTextField(),
             SizedBox(height: h*0.03,),
-            TextLabelField(prefixIcon: Icons.email, hint: 'Email', inputType: TextInputType.emailAddress, obscure: false, onSaved: (email){
-
+            TextLabelField(initial:"",prefixIcon: Icons.email, hint: 'Email', inputType: TextInputType.emailAddress, obscure: false, onSaved: (email){
+              _signUpEmail = email.toString();
             }),
             SizedBox(height: h*0.01,),
-            TextLabelField(prefixIcon: Icons.person, hint: 'Username', inputType: TextInputType.text, obscure: false, onSaved: (username){
-
+            TextLabelField(initial:"",prefixIcon: Icons.person, hint: 'Username', inputType: TextInputType.text, obscure: false, onSaved: (username){
+              _signUpUsername = username.toString();
             }),
             SizedBox(height: h*0.01,),
             PasswordTextField(suffixIcon: Icons.visibility, prefixIcon: Icons.lock, hint: 'Password', inputType: TextInputType.text, obscure: true, onSaved: (password){
-
+              _signUpPassword = password.toString();
             }),
             SizedBox(height: h*0.01,),
             PasswordTextField(suffixIcon: Icons.visibility, prefixIcon: Icons.lock, hint: 'Re-type Password', inputType: TextInputType.text, obscure: true, onSaved: (reTypePassword){
-
+              _signUpRetypePassword = reTypePassword.toString();
             }),
             SizedBox(height: h*0.01,),
             Theme(
@@ -132,8 +148,12 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
               ),
             ),
             SizedBox(height: h*0.03,),
-            AuthButton(value: 'Sign Up',function: (){
-                Navigator.pushNamed(context, MainScreen.routeName);
+            AuthButton(value: 'Sign Up',function: ()async{
+                if(checkedValue){
+                  final pref = await SharedPreferences.getInstance();
+                  pref.setString('rememberedEmail', _signUpEmail);
+                }
+                await AuthService().registerUser(_signUpEmail, _signUpPassword, _signUpRetypePassword, _signUpUsername);
               },
             ),
             SizedBox(height: h*0.03,),
@@ -150,6 +170,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     );
   }
 
+  void setRememberedEmail()async{
+    final pref = await SharedPreferences.getInstance();
+    setState(() {
+      rememberedEmail = pref.getString('rememberedEmail') ?? "";
+    });
+  }
+
   Widget buildLogInContainer(var h,var w){
     return Align(
       alignment: Alignment.bottomLeft,
@@ -162,12 +189,12 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
             SizedBox(height: h*0.01,),
             exploreTextField(),
             SizedBox(height: h*0.03,),
-            TextLabelField(prefixIcon: Icons.email, hint: 'Email', inputType: TextInputType.emailAddress, obscure: false, onSaved: (email){
-
+            TextLabelField(initial:rememberedEmail,prefixIcon: Icons.email, hint: 'Email', inputType: TextInputType.emailAddress, obscure: false, onSaved: (email){
+              _loginEmail = email;
             }),
             SizedBox(height: h*0.01,),
             PasswordTextField(suffixIcon: Icons.visibility, prefixIcon: Icons.lock, hint: 'Password', inputType: TextInputType.text, obscure: true, onSaved: (password){
-
+              _loginPassword = password;
             }),
             SizedBox(height: h*0.02,),
             const Align(
@@ -181,7 +208,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
             ),
             SizedBox(height: h*0.03,),
             AuthButton(value: 'Sign In',function: (){
-              Navigator.pushNamed(context, MainScreen.routeName);
+                AuthService().loginUser(_loginEmail, _loginPassword);
               },
             ),
             SizedBox(height: h*0.03,),
@@ -196,6 +223,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setRememberedEmail();
+    super.initState();
   }
 
   @override
@@ -233,6 +267,12 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                 ),
               )
             ],
+          ),
+          Visibility(
+            visible: _inProcess,
+            child: const Center(
+              child: CircularProgressIndicator(color: Colors.white,),
+            ),
           ),
         ],
     ));

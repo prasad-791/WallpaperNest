@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:wallpapernest/configurations/config.dart';
+import 'package:wallpapernest/models/liked_screen_arguments.dart';
+import 'package:wallpapernest/models/user.dart';
 import 'package:wallpapernest/screens/liked_wallpaper_screen/liked_wallpaper_screen.dart';
 import 'package:wallpapernest/screens/widgets/app_bar.dart';
+import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
+import 'package:wallpapernest/services/auth.dart';
+import 'package:wallpapernest/services/database.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+
+  final String? uid;
+  const ProfileScreen({Key? key,required this.uid}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  late CustomUser _user = CustomUser(uid: widget.uid!,email: '',userName: '',likedWallpapers: [],downloadedWallpapers: []);
 
   Widget profileHeader(var h,var w){
     return Row(
@@ -31,7 +46,14 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        Text('Aniket791',style: TextStyle(fontFamily: fontBold,fontSize: 22,color: primaryBlue),),
+        SizedBox(width: w*0.03,),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(_user.userName,style: TextStyle(fontFamily: fontBold,fontSize: 22,color: primaryBlue),),
+            Text(_user.email,style: TextStyle(fontSize: 12,fontFamily: fontSemiBold,color: primaryGrey),),
+          ],
+        ),
         SizedBox(width: w*0.1,),
         Container(
             padding: EdgeInsets.all(w*0.015),
@@ -78,6 +100,22 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  void getData()async{
+    if(widget.uid!=null){
+      final temp = await DatabaseService(uid: widget.uid!).getUserData();
+      setState(() {
+        _user = CustomUser(uid: temp.uid, email: temp.email, userName: temp.userName, likedWallpapers: temp.likedWallpapers, downloadedWallpapers: temp.downloadedWallpapers);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
@@ -101,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                   shortCuts(Icons.favorite, 'Liked Wallpaper', (){
-                    Navigator.pushNamed(context, LikedWallpaperScreen.routeName);
+                    Navigator.pushNamed(context, LikedWallpaperScreen.routeName,arguments: LikedScreenArguments(list: _user.likedWallpapers));
                   }, w),
                   SizedBox(height: h*0.03,),
                   shortCuts(Icons.person, 'Account Settings', (){}, w),
@@ -110,7 +148,9 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(height: h*0.03,),
                   shortCuts(Icons.chat, 'FAQ', (){}, w),
                   SizedBox(height: h*0.03,),
-                  logOutBtn((){}, w),
+                  logOutBtn((){
+                    AuthService().signOut();
+                  }, w),
               ],
             ),
           )

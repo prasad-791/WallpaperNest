@@ -65,6 +65,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
               color: Colors.grey
           ),
         ),
+        onChanged: (value)=> widget.onSaved!(value),
         onFieldSubmitted: (value)=> widget.onSaved!(value),
         validator: (value){
           if(value!.isEmpty) return "Empty Field Not Allowed";

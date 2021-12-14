@@ -1,15 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wallpapernest/configurations/config.dart';
+import 'package:wallpapernest/models/user.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/screens/widgets/grid_view_images.dart';
 import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
 import 'package:wallpapernest/screens/widgets/search_widget.dart';
+import 'package:wallpapernest/services/database.dart';
 import 'package:wallpapernest/services/unsplash_wallpaper.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+
+  final String? uid;
+  const MenuScreen({Key? key,required this.uid}) : super(key: key);
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -22,7 +27,9 @@ class _MenuScreenState extends State<MenuScreen> {
   bool isSearching = false;
   bool noResults = false;
 
-  Widget buildWelcomeHeader(var h,var w){
+  late CustomUser _user = CustomUser(uid: widget.uid!,email: '',userName: '',likedWallpapers: [],downloadedWallpapers: []);
+
+  Widget buildWelcomeHeader(var h,var w,String name){
     return Container(
       margin: EdgeInsets.only(top: h*0.03,right: w*0.05,left: w*0.05),
       child: Column(
@@ -35,7 +42,7 @@ class _MenuScreenState extends State<MenuScreen> {
               overflow: TextOverflow.ellipsis
           ),),
           SizedBox(height: h*0.005,),
-          Text("Aniket791 👋",style: TextStyle(
+          Text("$name 👋",style: TextStyle(
             fontFamily: fontBold,
             fontSize: 20,
             overflow: TextOverflow.ellipsis,
@@ -128,12 +135,23 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
 
+  void getData()async{
+    if(widget.uid!=null){
+      final temp = await DatabaseService(uid: widget.uid!).getUserData();
+      setState(() {
+        _user = CustomUser(uid: temp.uid, email: temp.email, userName: temp.userName, likedWallpapers: temp.likedWallpapers, downloadedWallpapers: temp.downloadedWallpapers);
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     setWallpaperList('nature',-1);
+    getData();
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +163,7 @@ class _MenuScreenState extends State<MenuScreen> {
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(child: buildWelcomeHeader(height, width)),
+            SizedBox(child: buildWelcomeHeader(height, width,_user.userName)),
             SizedBox(child: SearchBar(
               makeCategoryInvisible: (visible){
                 setState(() {

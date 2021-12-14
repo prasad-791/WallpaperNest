@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wallpapernest/configurations/config.dart';
+import 'package:wallpapernest/models/user.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/models/wallpaper_arguments.dart';
 import 'package:wallpapernest/screens/widgets/back_btn_appbar.dart';
-import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
+import 'package:wallpapernest/services/database.dart';
 import 'package:wallpapernest/services/unsplash_wallpaper.dart';
 
 class WallpaperScreen extends StatefulWidget {
+
   const WallpaperScreen({Key? key}) : super(key: key);
 
   static const routeName = '/wallpaper_screen';
@@ -54,7 +57,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     );
   }
 
-  Widget infoContainer(Wallpaper wallpaper,var h,var w){
+  Widget infoContainer(Wallpaper wallpaper,var h,var w,String uid){
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -79,6 +82,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                         inProcess = true;
                       });
                       await download(wallpaper.downloadURL);
+                      await DatabaseService(uid: uid).addToDownloadedWallpapers(wallpaper);
                       setState(() {
                         inProcess = false;
                       });
@@ -107,10 +111,11 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
             children: [
               FloatingActionButton(
                 backgroundColor: Colors.white,
-                onPressed: (){
+                onPressed: ()async{
                   setState(() {
                     inProcess = true;
                   });
+                  await DatabaseService(uid: uid).addToLikedWallpapers(wallpaper);
                   setState(() {
                     isLiked = !isLiked;
                     inProcess = false;
@@ -139,6 +144,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final user = Provider.of<CustomUser?>(context);
 
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
@@ -174,7 +181,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                             child: Image.network(wallpaper.regularImageURL,fit: BoxFit.fill,)
                         ),),
                       ),
-                      Visibility(visible: fullVisible,child: infoContainer(wallpaper, h, w)),
+                      Visibility(visible: fullVisible,child: infoContainer(wallpaper, h, w,user!.uid)),
                     ],
                   ),
                 ),
@@ -199,27 +206,6 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     child: CircularProgressIndicator(color: Colors.white,),
                   ),
                 ),
-                // Visibility(
-                //   visible: fullVisible,
-                //   child: Positioned(
-                //     child: FloatingActionButton(
-                //       backgroundColor: Colors.white,
-                //       onPressed: (){
-                //         setState(() {
-                //           inProcess = true;
-                //         });
-                //         setState(() {
-                //           isLiked = !isLiked;
-                //           inProcess = false;
-                //         });
-                //       },
-                //       child: Icon(
-                //         Icons.favorite,
-                //         color: isLiked==true? Colors.red : primaryGrey,
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
         ),

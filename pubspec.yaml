@@ -42,6 +42,11 @@ dependencies:
   path_provider: ^2.0.8
   wallpaper_manager_flutter: ^0.0.2
   flutter_cache_manager: ^3.1.2
+  firebase_auth: ^3.3.3
+  cloud_firestore: ^3.1.4
+  firebase_core: ^1.10.5
+  provider: ^6.0.1
+  shared_preferences: ^2.0.11
 
 dev_dependencies:
   flutter_test:

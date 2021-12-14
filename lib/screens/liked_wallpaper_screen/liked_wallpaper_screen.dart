@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallpapernest/models/liked_screen_arguments.dart';
 import 'package:wallpapernest/models/wallpaper.dart';
 import 'package:wallpapernest/screens/widgets/app_bar.dart';
 import 'package:wallpapernest/screens/widgets/back_btn_appbar.dart';
@@ -17,14 +18,9 @@ class LikedWallpaperScreen extends StatefulWidget {
 
 class _LikedWallpaperScreenState extends State<LikedWallpaperScreen> {
 
-  List<Wallpaper> likedWallpaperList = [];
-
   @override
   void initState() {
     // TODO: implement initState
-
-
-
     super.initState();
   }
 
@@ -32,6 +28,10 @@ class _LikedWallpaperScreenState extends State<LikedWallpaperScreen> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
+
+    final args = ModalRoute.of(context)!.settings.arguments as LikedScreenArguments;
+    List<Wallpaper> likedWallpaperList = args.list;
+
 
     return SafeArea(
       child: Scaffold(

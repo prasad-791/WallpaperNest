@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "960742638046",
+    "project_id": "wallpapernest-9bd01",
+    "storage_bucket": "wallpapernest-9bd01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960742638046:android:cea85795c7146d9f6d1d4f",
+        "android_client_info": {
+          "package_name": "com.example.wallpapernest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960742638046-jhler9mcv8i8d7egvfgovd2s0bflr2qn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5H9VqrMi6cRkX2bU_6tyhc0ti2Uc6DKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960742638046-jhler9mcv8i8d7egvfgovd2s0bflr2qn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
