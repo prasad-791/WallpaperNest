@@ -129,7 +129,7 @@ class _MenuScreenState extends State<MenuScreen> {
     }else{
       return Expanded(child: Padding(
         padding: const EdgeInsets.only(left: 10,right: 10),
-        child: GridViewImages(imageList: wallpaperList,),
+        child: GridViewImages(imageList: wallpaperList, isFromMenuScreen: true,delete: (item){},),
       ));
     }
   }

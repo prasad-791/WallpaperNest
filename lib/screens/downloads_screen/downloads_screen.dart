@@ -49,14 +49,20 @@ class _DownloadScreenState extends State<DownloadScreen> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width*0.01),
+        padding: EdgeInsets.symmetric(horizontal: width*0.03),
         child: Column(
           children: [
             const SizedBox(
               child: CustomAppBar(title: "Downloads",),
             ),
             downloadedWallpaperList.isEmpty?
-            const EmptyPlaceHolder(name: 'Downloads'):Expanded(child: GridViewImages(imageList: downloadedWallpaperList,)),
+            const EmptyPlaceHolder(name: 'Downloads'):Expanded(child: GridViewImages(imageList: downloadedWallpaperList, isFromMenuScreen: false,
+            delete: (item)async{
+              await DatabaseService(uid: widget.uid!).removeFromDownloads(item);
+              setState(() {
+                getData();
+              });
+            },)),
           ],
         ),
       ),

@@ -61,11 +61,50 @@ class DatabaseService{
     return result;
   }
 
+  Future removeFromDownloads(Wallpaper item)async{
+    final result = await userCollection.doc(uid).update({
+      "downloadedWallpapers": FieldValue.arrayRemove([{
+        "imageURL": item.imageURL,
+        "likes": item.likes,
+        "photoID": item.photoID,
+        "likedByUser": item.likedByUser,
+        "regularImageURL": item.regularImageURL,
+        "title": item.title,
+        "userName": item.userName,
+        "description": item.description,
+        "date": item.date,
+        "downloadURL": item.downloadURL,
+      }]),
+    }).then((value){
+      showToast("Deleted from Downloaded Wallpapers!");
+    },onError: (e){showToast(e.toString());});
+
+    return result;
+  }
+
+  Future removeFromLikedWallpapers(Wallpaper item)async{
+    final result = await userCollection.doc(uid).update({
+      "likedWallpapers": FieldValue.arrayRemove([{
+        "imageURL": item.imageURL,
+        "likes": item.likes,
+        "photoID": item.photoID,
+        "likedByUser": item.likedByUser,
+        "regularImageURL": item.regularImageURL,
+        "title": item.title,
+        "userName": item.userName,
+        "description": item.description,
+        "date": item.date,
+        "downloadURL": item.downloadURL,
+      }]),
+    }).then((value){
+      showToast("Deleted from Liked Wallpapers!");
+    },onError: (e){showToast(e.toString());});
+
+    return result;
+  }
+
   Future<CustomUser> getUserData()async{
     late CustomUser user;
-    // await userCollection.doc(uid).get().then((value){
-    //   user = CustomUser(uid: value['uid'].toString() , email: value['email'].toString(), userName: value['userName'].toString(), likedWallpapers: value['likedWallpapers'] as List<Wallpaper>, downloadedWallpapers:  value['downloadedWallpapers'] as List<Wallpaper>);
-    // },onError: (e){showToast(e.toString());});
 
     await userCollection.doc(uid).get().then((value){
       user = CustomUser(uid: value['uid'].toString() , email: value['email'].toString(), userName: value['userName'].toString(), likedWallpapers: [], downloadedWallpapers: []);

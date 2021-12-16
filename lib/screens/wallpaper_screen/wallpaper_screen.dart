@@ -112,14 +112,16 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
               FloatingActionButton(
                 backgroundColor: Colors.white,
                 onPressed: ()async{
-                  setState(() {
-                    inProcess = true;
-                  });
-                  await DatabaseService(uid: uid).addToLikedWallpapers(wallpaper);
-                  setState(() {
-                    isLiked = !isLiked;
-                    inProcess = false;
-                  });
+                  if(!inProcess){
+                    setState(() {
+                      inProcess = true;
+                    });
+                    await DatabaseService(uid: uid).addToLikedWallpapers(wallpaper);
+                    setState(() {
+                      isLiked = !isLiked;
+                      inProcess = false;
+                    });
+                  }
                 },
                 child: Icon(
                   Icons.favorite,

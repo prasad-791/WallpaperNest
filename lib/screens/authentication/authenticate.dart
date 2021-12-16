@@ -175,6 +175,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     setState(() {
       rememberedEmail = pref.getString('rememberedEmail') ?? "";
     });
+    if(rememberedEmail.isNotEmpty){
+      showToast("Sign In with $rememberedEmail");
+    }
   }
 
   Widget buildLogInContainer(var h,var w){
