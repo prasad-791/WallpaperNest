@@ -1,4 +1,4 @@
-# Wallpapernest
+# WallpaperNest
 
 A Wallpaper App implemented using Flutter as frontend and Firebase as backend for storing user data and authentication. 
 
