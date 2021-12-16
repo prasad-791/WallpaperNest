@@ -4,7 +4,6 @@ import 'package:wallpapernest/models/liked_screen_arguments.dart';
 import 'package:wallpapernest/models/user.dart';
 import 'package:wallpapernest/screens/liked_wallpaper_screen/liked_wallpaper_screen.dart';
 import 'package:wallpapernest/screens/widgets/app_bar.dart';
-import 'package:wallpapernest/screens/widgets/placeholder_toast.dart';
 import 'package:wallpapernest/services/auth.dart';
 import 'package:wallpapernest/services/database.dart';
 
@@ -50,8 +49,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_user.userName,style: TextStyle(fontFamily: fontBold,fontSize: 22,color: primaryBlue),),
-            Text(_user.email,style: TextStyle(fontSize: 12,fontFamily: fontSemiBold,color: primaryGrey),),
+            Text(_user.userName,style: TextStyle(fontFamily: fontBold,fontSize: 22,color: primaryBlue),overflow: TextOverflow.ellipsis,),
+            Text(_user.email,style: TextStyle(fontSize: 12,fontFamily: fontSemiBold,color: primaryGrey),overflow: TextOverflow.ellipsis,),
           ],
         ),
         SizedBox(width: w*0.1,),
