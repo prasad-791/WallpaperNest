@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/70054943/149655135-e7b86088-00e8-4865-
 # Set Image as Wallpaper to your device
 https://user-images.githubusercontent.com/70054943/149655188-35cf9013-d76d-4166-8623-7b3be54039b3.mp4
 
-# Download and Save likded Wallpapers
+# Download and Save liked Wallpapers
 https://user-images.githubusercontent.com/70054943/149655222-4f8eb2e2-ac48-4108-bfc9-29b61c8c5271.mp4
 
 https://user-images.githubusercontent.com/70054943/149655269-76826137-b49f-4776-b1a5-e3a8a63ff979.mp4
